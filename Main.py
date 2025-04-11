@@ -8,6 +8,7 @@ import os
 # ---------------------- Web Scraping Functions ----------------------
 
 @st.cache_data(ttl=300)
+@st.cache_data(ttl=300)
 def fetch_gold_price():
     url = "https://www.goldenchennai.com/finance/gold-rate-in-tamilnadu/gold-rate-in-chennai/"
     headers = headers = {
@@ -18,13 +19,23 @@ def fetch_gold_price():
 }
 
     response = requests.get(url, headers=headers)
+
+    if response.status_code != 200:
+        raise ValueError(f"Failed to fetch page: {response.status_code}")
+    
+    # DEBUG: check what HTML is being served
+    st.warning("Check the HTML structure returned")
+    st.code(response.text[:1000])  # Show first 1000 chars of the HTML
+    
     tree = html.fromstring(response.text)
     rate_text = tree.xpath('//table[contains(@class,"table-db")][1]/tbody/tr[2]/td[3]/text()')
+    
     if rate_text:
         rate = rate_text[0].replace("INR", "").replace(",", "").strip()
         return float(rate)
     else:
         raise ValueError("Gold rate not found on the page.")
+
 
 @st.cache_data(ttl=300)
 def fetch_silver_price():
