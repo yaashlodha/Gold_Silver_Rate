@@ -10,7 +10,13 @@ import os
 @st.cache_data(ttl=300)
 def fetch_gold_price():
     url = "https://www.goldenchennai.com/finance/gold-rate-in-tamilnadu/gold-rate-in-chennai/"
-    headers = {'User-Agent': 'Mozilla/5.0'}
+    headers = headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'Accept-Language': 'en-US,en;q=0.5',
+    'Referer': 'https://www.google.com'
+}
+
     response = requests.get(url, headers=headers)
     tree = html.fromstring(response.text)
     rate_text = tree.xpath('//table[contains(@class,"table-db")][1]/tbody/tr[2]/td[3]/text()')
@@ -23,7 +29,13 @@ def fetch_gold_price():
 @st.cache_data(ttl=300)
 def fetch_silver_price():
     url = "https://www.goldenchennai.com/finance/silver-rate-in-tamilnadu/silver-rate-in-chennai/"
-    headers = {'User-Agent': 'Mozilla/5.0'}
+    headers = headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'Accept-Language': 'en-US,en;q=0.5',
+    'Referer': 'https://www.google.com'
+
+}
     response = requests.get(url, headers=headers)
     tree = html.fromstring(response.text)
     rate_text = tree.xpath('//table[contains(@class,"table-db")][1]/tbody/tr[2]/td[2]/text()')
