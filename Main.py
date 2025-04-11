@@ -7,9 +7,6 @@ import time
 def get_headless_driver():
     options = Options()
     options.add_argument("--headless")  # Run browser in headless mode
-    options.add_argument("--disable-gpu")  # Optional, good for Windows systems
-    options.add_argument("--no-sandbox")  # Required for some environments like Linux servers
-    options.add_argument("--disable-dev-shm-usage")  # Helps prevent crashes in containers
 
     service = Service()  # Or provide the path to your chromedriver here
     driver = webdriver.Chrome(service=service, options=options)
