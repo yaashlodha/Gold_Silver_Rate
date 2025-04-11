@@ -4,50 +4,40 @@ from lxml import html
 
 # ---------------------- Web Scraping Functions ----------------------
 
-@st.cache_data
 
+
+@st.cache_data(ttl=300)
 def fetch_gold_price():
-    try:
-        url = "https://www.goldenchennai.com/finance/gold-rate-in-tamilnadu/gold-rate-in-chennai/"
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
-        }
-        response = requests.get(url, headers=headers)
-        tree = html.fromstring(response.content)
-        rate_list = tree.xpath('//table[contains(@class,"table-db")][1]/tbody/tr[2]/td[2]')
-        
-        if rate_list:
-            rate = rate_list[0].text_content().replace('INR', '').replace(' ', '').replace(',', '')
-            return float(rate)
-        else:
-            raise ValueError("gold rate not found in HTML")
+    url = "https://www.goldenchennai.com/finance/gold-rate-in-tamilnadu/gold-rate-in-chennai/"
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    response = requests.get(url, headers=headers)
+    tree = html.fromstring(response.text)
+
+    # Extracting 22K gold price for 1 gram
+    rate_text = tree.xpath('//table[contains(@class,"table-db")][1]/tbody/tr[2]/td[3]/text()')
     
-    except Exception as e:
-        st.warning(f"Failed to fetch gold rate: {e}")
-        return None
+    if rate_text:
+        rate = rate_text[0].replace("INR", "").replace(",", "").strip()
+        return float(rate)
+    else:
+        raise ValueError("Gold rate not found on the page.")
 
-@st.cache_data
 
+@st.cache_data(ttl=300)
 def fetch_silver_price():
-    try:
-        url = "https://www.goldenchennai.com/finance/silver-rate-in-tamilnadu/silver-rate-in-chennai/"
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
-        }
-        response = requests.get(url, headers=headers)
-        tree = html.fromstring(response.content)
-        rate_list = tree.xpath('//table[contains(@class,"table-db")][1]/tbody/tr[2]/td[2]')
-        
-        if rate_list:
-            rate = rate_list[0].text_content().replace('INR', '').replace(' ', '').replace(',', '')
-            return float(rate)
-        else:
-            raise ValueError("Silver rate not found in HTML")
-    
-    except Exception as e:
-        st.warning(f"Failed to fetch silver rate: {e}")
-        return None
+    url = "https://www.goldenchennai.com/finance/silver-rate-in-tamilnadu/silver-rate-in-chennai/"
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    response = requests.get(url, headers=headers)
+    tree = html.fromstring(response.text)
 
+    # Extracting 22K gold price for 1 gram
+    rate_text = tree.xpath('//table[contains(@class,"table-db")][1]/tbody/tr[2]/td[2]/text()')
+    
+    if rate_text:
+        rate = rate_text[0].replace("INR", "").replace(",", "").strip()
+        return float(rate)
+    else:
+        raise ValueError("Gold rate not found on the page.")
 # ---------------------- Helper Functions ----------------------
 
 def check_make_charges(rate):
