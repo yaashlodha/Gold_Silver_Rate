@@ -1,53 +1,55 @@
 import streamlit as st
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-import time
-def get_headless_driver():
-    options = Options()
-    options.add_argument("--headless")  # Run browser in headless mode
+import requests
+from lxml import html
 
-    service = Service()  # Or provide the path to your chromedriver here
-    driver = webdriver.Chrome(service=service, options=options)
-    return driver
+# ---------------------- Web Scraping Functions ----------------------
 
-
-
-# Cache gold price to avoid multiple fetches
 @st.cache_data
+
 def fetch_gold_price():
-    driver = get_headless_driver()
-    driver.get("https://www.goldenchennai.com/finance/gold-rate-in-tamilnadu/gold-rate-in-chennai/")
-    time.sleep(5)
     try:
-        element = driver.find_element(By.XPATH, '//table[contains(@class,"table-db")][1]/tbody/tr[2]/td[3]')
-        rate = element.text.replace('INR', '').replace(' ', '').replace(',', '')
-        return float(rate)
+        url = "https://www.goldenchennai.com/finance/gold-rate-in-tamilnadu/gold-rate-in-chennai/"
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+        }
+        response = requests.get(url, headers=headers)
+        tree = html.fromstring(response.content)
+        rate_list = tree.xpath('//table[contains(@class,"table-db")][1]/tbody/tr[2]/td[2]')
+        
+        if rate_list:
+            rate = rate_list[0].text_content().replace('INR', '').replace(' ', '').replace(',', '')
+            return float(rate)
+        else:
+            raise ValueError("gold rate not found in HTML")
+    
     except Exception as e:
-        st.error(f"Failed to fetch gold rate: {e}")
+        st.warning(f"Failed to fetch gold rate: {e}")
         return None
-    finally:
-        driver.quit()
 
-# Cache silver price to avoid multiple fetches
 @st.cache_data
-def fetch_silver_price():
-     
-    driver = get_headless_driver()
-    driver.get("https://www.goldenchennai.com/finance/silver-rate-in-tamilnadu/silver-rate-in-chennai/")
-    time.sleep(5)
-    try:
-        element = driver.find_element(By.XPATH, '//table[contains(@class,"table-db")][1]/tbody/tr[2]/td[2]')
-        rate = element.text.replace('INR', '').replace(' ', '').replace(',', '')
-        return float(rate)
-    except Exception as e:
-        st.error(f"Failed to fetch silver rate: {e}")
-        return None
-    finally:
-        driver.quit()
 
-# Helper functions
+def fetch_silver_price():
+    try:
+        url = "https://www.goldenchennai.com/finance/silver-rate-in-tamilnadu/silver-rate-in-chennai/"
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+        }
+        response = requests.get(url, headers=headers)
+        tree = html.fromstring(response.content)
+        rate_list = tree.xpath('//table[contains(@class,"table-db")][1]/tbody/tr[2]/td[2]')
+        
+        if rate_list:
+            rate = rate_list[0].text_content().replace('INR', '').replace(' ', '').replace(',', '')
+            return float(rate)
+        else:
+            raise ValueError("Silver rate not found in HTML")
+    
+    except Exception as e:
+        st.warning(f"Failed to fetch silver rate: {e}")
+        return None
+
+# ---------------------- Helper Functions ----------------------
+
 def check_make_charges(rate):
     if rate < 2000:
         return 200
@@ -67,7 +69,7 @@ def making_calculate_price(gms, rate):
 
 # ---------------------- Streamlit App ----------------------
 
-st.title("Gold & Silver Price Calculator")
+st.title("💰 Gold & Silver Price Calculator")
 
 gold_rate = fetch_gold_price()
 silver_rate = fetch_silver_price()
@@ -91,3 +93,5 @@ if gold_rate and silver_rate:
     else:
         price = making_calculate_price(gms, silver_rate)
         st.success(f"Total price for {gms}g of silver is ₹{price:.2f}")
+else:
+    st.warning("Unable to fetch live prices. Please try again later.")
