@@ -7,7 +7,7 @@ import os
 
 # ---------------------- Web Scraping Functions ----------------------
 
-@st.cache_data(ttl=300)
+
 @st.cache_data(ttl=300)
 def fetch_gold_price():
     url = "https://www.goldenchennai.com/finance/gold-rate-in-tamilnadu/gold-rate-in-chennai/"
