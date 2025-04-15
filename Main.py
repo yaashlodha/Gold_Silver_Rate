@@ -76,9 +76,8 @@ if gold_rate and silver_rate:
 
         if gold_type == "916":
             waste = st.number_input("Enter the wastage percentage:", min_value=0.0, max_value=100.0, step=0.1)
-            wasteage = (waste / 100) * gms
-            price = wasteage * gold_rate
-            wasteage = waste
+            wasteage=waste /100*gms
+            price=(gms+wasteage)*gold_rate
             st.success(f"Total price for {gms}g of 916 gold is ₹{price:.2f}")
         else:
             making_charges = st.number_input("Enter the making charges:", min_value=0.0, step=0.1)
