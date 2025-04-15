@@ -24,8 +24,6 @@ def fetch_gold_price():
         raise ValueError(f"Failed to fetch page: {response.status_code}")
     
     # DEBUG: check what HTML is being served
-    st.warning("Check the HTML structure returned")
-    st.code(response.text[:1000])  # Show first 1000 chars of the HTML
     
     tree = html.fromstring(response.text)
     rate_text = tree.xpath('//table[contains(@class,"table-db")][1]/tbody/tr[2]/td[3]/text()')
