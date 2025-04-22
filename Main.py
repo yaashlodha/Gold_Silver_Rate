@@ -56,7 +56,7 @@ def fetch_silver_price():
 
 # ---------------------- UI and Calculation ----------------------
 
-st.title("💰 Gold & Silver Price Calculator")
+st.title(" Gold & Silver Price Calculator")
 
 gold_rate = fetch_gold_price()
 silver_rate = fetch_silver_price()
