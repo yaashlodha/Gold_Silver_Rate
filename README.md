@@ -1,4 +1,4 @@
-# 💰 Gold & Silver Price Calculator  
+#  Gold & Silver Price Calculator  
 
 This project is a **web application built with Streamlit** that fetches live gold and silver prices from [GoldenChennai.com](https://www.goldenchennai.com) and provides an interactive calculator to estimate jewelry costs. Users can enter the weight, select the metal type, and apply wastage or making charges to calculate the final price in real-time.  
 
